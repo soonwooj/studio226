@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STUDIO226 — Contents Production</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #080808;
+    --white: #ffffff;
+    --accent: #f0c040;
+    --accent2: #f5d060;
+    --muted: #888880;
+    --line: rgba(240,192,64,0.2);
+    --serif: 'DM Serif Display', 'Noto Serif KR', serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--mono);
+    font-size: 32px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 16px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 6rem 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(240,192,64,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(240,192,64,0.05) 0%, transparent 60%);
+  }
+  .hero-eyebrow {
+    font-size: 15px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-desc {
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 20px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+  .hero-line {
+    width: 100%;
+    height: 1px;
+    background: var(--line);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.7s;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
+  }
+  .hero-meta-item { }
+  .hero-meta-label {
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+  .hero-meta-value {
+    font-family: var(--serif);
+    font-size: 2.1rem;
+    color: var(--accent);
+  }
+
+  /* SECTION */
+  section {
+    padding: 6rem 3rem;
+    border-top: 1px solid var(--line);
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  .section-num {
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: -0.01em;
+  }
+
+  /* WORKS GRID */
+  .works-filter {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 15px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,184,154,0.05);
+  }
+
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--line);
+  }
+  .work-item {
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    aspect-ratio: 16/9;
+  }
+  .work-item.hidden { display: none; }
+  .work-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease, filter 0.4s ease;
+    filter: grayscale(30%) brightness(0.8);
+  }
+  .work-item:hover .work-thumb {
+    transform: scale(1.05);
+    filter: grayscale(0%) brightness(1);
+  }
+  .work-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.3) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .work-item:hover .work-overlay { opacity: 1; }
+  .work-tag {
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .work-name {
+    font-family: var(--serif);
+    font-size: 1.65rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  .work-client {
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .work-link {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+  }
+
+  /* FILM */
+  .film-table {
+    width: 100%;
+    max-width: 720px;
+    border-collapse: collapse;
+  }
+  .film-table tr { border-bottom: 1px solid var(--line); }
+  .film-table tr:first-child { border-top: 1px solid var(--line); }
+  .film-table td { padding: 1rem 0.5rem; vertical-align: middle; }
+  .td-type {
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    width: 70px;
+    padding-left: 0 !important;
+  }
+  .td-title {
+    font-family: var(--serif);
+    font-size: 1.575rem;
+    color: var(--white);
+  }
+  .td-cast {
+    color: var(--muted);
+    font-size: 18px;
+  }
+  .td-role {
+    color: var(--muted);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-align: right;
+    padding-right: 0 !important;
+    white-space: nowrap;
+  }
+  .film-more {
+    margin-top: 1.5rem;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* DRONE REEL */
+  .reel-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .reel-embed {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: 1px solid var(--line);
+  }
+  .reel-caption {
+    margin-top: 1rem;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  .reel-btn {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 18px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--accent);
+    padding: 1rem 2.5rem;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .reel-btn:hover {
+    background: var(--accent2);
+    transform: translateX(4px);
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .about-text {
+    font-family: var(--mono);
+    font-size: 1.5rem;
+    line-height: 2;
+    color: rgba(245,243,238,0.75);
+    font-weight: 300;
+  }
+  .about-text p + p { margin-top: 1.5rem; }
+  .about-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .stat-item { border-left: 1px solid var(--accent); padding-left: 1.5rem; }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 3.75rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-label {
+    font-size: 15px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* CONTACT */
+  .contact-inner {
+    max-width: 600px;
+  }
+  .contact-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .contact-label {
+    font-size: 15px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .contact-value {
+    font-family: var(--serif);
+    font-size: 1.65rem;
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-value:hover { color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer span { font-size: 16px; color: var(--muted); }
+
+  /* ANIM */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 5rem 1.5rem 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .works-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">STUDIO226</a>
+  <div class="nav-links">
+    <a href="#works">Works</a>
+    <a href="#film">Film & Drama</a>
+    <a href="#reel">Drone Reel</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Contents Production · Seoul, Korea</div>
+  <h1 class="hero-title">STUDIO<em>226</em></h1>
+  <p class="hero-desc">One director. Every stage.<br>기획 의도를 이해하고, 현장을 읽고, 결과물로 증명합니다.<br>촬영부터 드론, 편집까지 한 사람이 책임지기 때문에<br>커뮤니케이션이 빠르고, 방향이 흔들리지 않습니다.</p>
+  <div class="hero-line"></div>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">경력</div>
+      <div class="hero-meta-value">15+</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">전문분야</div>
+      <div class="hero-meta-value">Drone</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">촬영포맷</div>
+      <div class="hero-meta-value">4K</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKS -->
+<section id="works">
+  <div class="section-header reveal">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Works</h2>
+  </div>
+
+  <div class="works-filter reveal">
+    <button class="filter-btn active" onclick="filterWorks('all', this)">All</button>
+    <button class="filter-btn" onclick="filterWorks('mv', this)">Music Video</button>
+    <button class="filter-btn" onclick="filterWorks('cf', this)">CF / AD</button>
+    <button class="filter-btn" onclick="filterWorks('event', this)">Event</button>
+    <button class="filter-btn" onclick="filterWorks('corporate', this)">Corporate</button>
+    <button class="filter-btn" onclick="filterWorks('docu', this)">Documentary</button>
+    <button class="filter-btn" onclick="filterWorks('ai', this)">AI Production</button>
+  </div>
+
+  <div class="works-grid" id="worksGrid">
+
+    <div class="work-item" data-cat="mv">
+      <img class="work-thumb" src="" alt="j-hope Arson">
+      <div class="work-overlay">
+        <div class="work-tag">Music Video · Drone</div>
+        <div class="work-name">j-hope '방화 (Arson)' MV</div>
+        <div class="work-client">BTS / BIGHIT MUSIC</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/QmpTkkaKYSU" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="mv">
+      <img class="work-thumb" src="" alt="NCT DREAM Hello Future">
+      <div class="work-overlay">
+        <div class="work-tag">Music Video · Drone</div>
+        <div class="work-name">NCT DREAM 'Hello Future' MV</div>
+        <div class="work-client">SM Entertainment</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/QPUjV7epJqE" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="mv">
+      <img class="work-thumb" src="" alt="Trouble Maker">
+      <div class="work-overlay">
+        <div class="work-tag">Music Video · Drone</div>
+        <div class="work-name">Trouble Maker '내일은 없어 (Now)' MV</div>
+        <div class="work-client">CUBE Entertainment</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/6pw972Kl3L0" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="cf">
+      <img class="work-thumb" src="" alt="KT 5G">
+      <div class="work-overlay">
+        <div class="work-tag">TVCF · Drone</div>
+        <div class="work-name">KT 5G 스마트시티 편</div>
+        <div class="work-client">KT</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/Nm__zQItF24" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="cf">
+      <img class="work-thumb" src="" alt="이니스프리">
+      <div class="work-overlay">
+        <div class="work-tag">TVCF · Drone</div>
+        <div class="work-name">이니스프리 진저 오일 세럼</div>
+        <div class="work-client">이니스프리</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/7L_F8QWSlNw" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="cf">
+      <img class="work-thumb" src="" alt="쉐보레">
+      <div class="work-overlay">
+        <div class="work-tag">TVCF · Drone</div>
+        <div class="work-name">쉐보레 올란도</div>
+        <div class="work-client">GM Korea</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/ktOgOF3SHzM" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="cf">
+      <img class="work-thumb" src="" alt="혼라이프 VENUE">
+      <div class="work-overlay">
+        <div class="work-tag">Viral · Drone · Edit</div>
+        <div class="work-name">혼라이프 SUV, VENUE R&D 스토리</div>
+        <div class="work-client">현대자동차</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/T8ObfSOD4-g" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="event">
+      <img class="work-thumb" src="" alt="파이롯트">
+      <div class="work-overlay">
+        <div class="work-tag">Event Sketch</div>
+        <div class="work-name">파이롯트 오피스 성수 팝업스토어</div>
+        <div class="work-client">PILOT</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/zkZnhzG4bZU" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="event">
+      <img class="work-thumb" src="" alt="KT 자라섬">
+      <div class="work-overlay">
+        <div class="work-tag">Event · Drone</div>
+        <div class="work-name">2025 KT VOYAGE to Jarasum</div>
+        <div class="work-client">KT</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/09MdTz6vI1U" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="event">
+      <img class="work-thumb" src="" alt="아우디">
+      <div class="work-overlay">
+        <div class="work-tag">Event Sketch</div>
+        <div class="work-name">House of Progress Seoul</div>
+        <div class="work-client">AUDI Korea</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/YJNFv013YLk" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="event">
+      <img class="work-thumb" src="" alt="MINI 부산">
+      <div class="work-overlay">
+        <div class="work-tag">Event Sketch</div>
+        <div class="work-name">MINI 2022 부산 국제 모터쇼</div>
+        <div class="work-client">MINI Korea</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/TEMwBFYTja4" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="event">
+      <img class="work-thumb" src="" alt="KT 울릉도">
+      <div class="work-overlay">
+        <div class="work-tag">Event · Drone</div>
+        <div class="work-name">울릉도 여행 [당신이 가는 모든 곳에 KT]</div>
+        <div class="work-client">KT</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/jw8rKNKAdf8" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="corporate">
+      <img class="work-thumb" src="" alt="아토텍">
+      <div class="work-overlay">
+        <div class="work-tag">Corporate · Drone</div>
+        <div class="work-name">아토텍코리아 소개영상</div>
+        <div class="work-client">Atotech Korea</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/nmt9IKgiEhE" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="docu">
+      <img class="work-thumb" src="" alt="인생은 어바웃">
+      <div class="work-overlay">
+        <div class="work-tag">Documentary</div>
+        <div class="work-name">인생은 어바웃3 — 라오스 편</div>
+        <div class="work-client">평화방송</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/rDrmPBqQp-o" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="docu">
+      <img class="work-thumb" src="" alt="순례">
+      <div class="work-overlay">
+        <div class="work-tag">Documentary · Drone</div>
+        <div class="work-name">순례, 김대건을 만나다</div>
+        <div class="work-client">평화방송</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/zofcR8_6Ewk" target="_blank"></a>
+    </div>
+
+    <div class="work-item" data-cat="ai">
+      <img class="work-thumb" src="" alt="AI 광고대상">
+      <div class="work-overlay">
+        <div class="work-tag">AI Production</div>
+        <div class="work-name">광고대상 인트로 영상</div>
+        <div class="work-client">AI Generated</div>
+      </div>
+      <a class="work-link" href="https://youtu.be/rB1tRM56b0Q" target="_blank"></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- FILM & DRAMA -->
+<section id="film">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Film & Drama</h2>
+  </div>
+  <table class="film-table reveal">
+    <tr>
+      <td class="td-type">Film</td>
+      <td class="td-title">창궐</td>
+      <td class="td-cast">주연 현빈</td>
+      <td class="td-role">드론촬영 참여</td>
+    </tr>
+    <tr>
+      <td class="td-type">Film</td>
+      <td class="td-title">보고타</td>
+      <td class="td-cast">주연 송중기</td>
+      <td class="td-role">드론촬영 참여</td>
+    </tr>
+    <tr>
+      <td class="td-type">Film</td>
+      <td class="td-title">PMC: 더 벙커</td>
+      <td class="td-cast">주연 하정우</td>
+      <td class="td-role">드론촬영 참여</td>
+    </tr>
+    <tr>
+      <td class="td-type">Drama</td>
+      <td class="td-title">신과함께 법률사무소</td>
+      <td class="td-cast">주연 유연석</td>
+      <td class="td-role">드론촬영 참여</td>
+    </tr>
+    <tr>
+      <td class="td-type">Drama</td>
+      <td class="td-title">아스달 연대기</td>
+      <td class="td-cast">tvN</td>
+      <td class="td-role">드론촬영 참여</td>
+    </tr>
+  </table>
+  <p class="film-more reveal">+ 그 외 다수 참여</p>
+</section>
+
+<!-- DRONE REEL -->
+<section id="reel">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Drone Reel</h2>
+  </div>
+  <div class="reel-wrap reveal">
+    <p style="color:var(--muted); font-size: 20px; line-height:2; max-width:520px; margin-bottom:2.5rem;">
+      드론 항공촬영 전문 쇼릴을 확인할 수 있습니다.<br>
+      광고, 뮤직비디오, 영화 현장에서 촬영한 실제 드론 풋티지로 구성되어 있습니다.
+    </p>
+    <a href="https://blog.naver.com/dronestock/221214079448" target="_blank" class="reel-btn">
+      드론 쇼릴 보기 →
+    </a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">04</span>
+    <h2 class="section-title">About</h2>
+  </div>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>영상 제작에서 가장 많이 낭비되는 건 돈이 아니라 커뮤니케이션입니다.</p>
+      <p>감독, 촬영팀, 드론팀, 편집팀이 따로 움직이는 구조에서 처음 나눈 대화는 반드시 희석됩니다. 스튜디오226은 기획, 촬영, 드론, 편집을 한 사람이 처음부터 끝까지 담당합니다. 전달 과정이 없으니 뉘앙스가 사라지지 않습니다.</p>
+      <p>영화연출을 전공한 감독이 직접 카메라를 잡고, 드론을 날리고, 편집실에 앉습니다. 다 한다는 게 약점이 아닙니다. 처음 나눈 대화가 최종 결과물까지 그대로 이어지는 시스템입니다.</p>
+      <p>AI 영상까지. 도구가 바뀌어도 현장을 읽는 감각은 같습니다.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-item">
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Years of Experience</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4K</div>
+        <div class="stat-label">All Footage Format</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">Full</div>
+        <div class="stat-label">Pre to Post Production</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">FAA</div>
+        <div class="stat-label">Licensed Drone Pilot</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Contact</h2>
+  </div>
+  <div class="contact-inner reveal">
+    <div class="contact-line">
+      <span class="contact-label">Email</span>
+      <a class="contact-value" href="mailto:swhaneul@naver.com">swhaneul@naver.com</a>
+    </div>
+    <div class="contact-line">
+      <span class="contact-label">Phone</span>
+      <a class="contact-value" href="tel:01066808325">010-6680-8325</a>
+    </div>
+    <div class="contact-line">
+      <span class="contact-label">Location</span>
+      <span class="contact-value">Seoul, Korea</span>
+    </div>
+    <div class="contact-line">
+      <span class="contact-label">Speciality</span>
+      <span class="contact-value">Drone · Film · CF · MV</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 STUDIO226 · Jung Soonwoo</span>
+  <span>Contents Production · Seoul</span>
+</footer>
+
+<script>
+  // 썸네일 fallback: maxresdefault → hqdefault → mqdefault
+  function getYouTubeId(url) {
+    const match = url.match(/(?:youtu\.be\/|v=)([^?&]+)/);
+    return match ? match[1] : null;
+  }
+
+  document.querySelectorAll('.work-thumb').forEach(img => {
+    const link = img.closest('.work-item').querySelector('.work-link');
+    if (!link) return;
+    const vid = getYouTubeId(link.href);
+    if (!vid) return;
+
+    const sizes = ['maxresdefault', 'hqdefault', 'mqdefault', 'sddefault'];
+    let idx = 0;
+
+    function tryNext() {
+      if (idx >= sizes.length) return;
+      img.src = `https://img.youtube.com/vi/${vid}/${sizes[idx]}.jpg`;
+      idx++;
+    }
+
+    img.onerror = tryNext;
+    tryNext();
+  });
+
+  function filterWorks(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.work-item').forEach(item => {
+      if (cat === 'all' || item.dataset.cat === cat) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
